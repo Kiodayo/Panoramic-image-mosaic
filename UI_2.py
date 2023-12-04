@@ -134,9 +134,11 @@ class ImageApp:
 
                 self.has_output = True
 
+                self.display_messageSuccess()
+
             except FileNotFoundError as ex:
                 print("图片不符合拼接要求")
-                self.display_messagebox()
+                self.display_messageError()
 
     # 重置输入
 
@@ -155,9 +157,13 @@ class ImageApp:
         self.output_image_label.pack_forget()
         self.has_output = False
 
-    def display_messagebox(self):
+    def display_messageError(self):
         tk.messagebox.showerror(title='出现错误',
                                 message='您选择的图片不适合全景拼接')  # 消息提醒弹窗，点击确定返回值为 ok
+
+    def display_messageSuccess(self):
+        tk.messagebox.showinfo(title='成功！',
+                                message='已生成全景拼接后的图像')  # 消息提醒弹窗，点击确定返回值为 ok
 
 
 # 创建主窗口
