@@ -17,7 +17,7 @@ class ImageApp:
         self.has_output = False
 
         # 图片框架，用于显示图片
-        self.frame_images = tk.Frame(self.root, bg="yellow")
+        self.frame_images = tk.Frame(self.root)
         self.frame_images.pack(fill=tk.BOTH, expand=True)
 
         # 用于显示图像一和图像二的标签
