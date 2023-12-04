@@ -20,10 +20,8 @@ class ImageApp:
         self.frame_images.pack(fill=tk.BOTH, expand=True)
 
         # 用于显示图像一和图像二的标签
-        # self.label_image1 = tk.Label(self.frame_images)
-        # self.label_image1.pack(side=tk.LEFT, padx=10)
-
         self.label_image = []
+        self.output_image_label = tk.Label(self.frame_images)
 
         # 图片对象，防止被垃圾收集器回收
         self.photo_image = []
@@ -67,9 +65,13 @@ class ImageApp:
             main.images.append(image_read)
             print("add")
 
+            # 取消输出显示
+            self.image_output_reset()
+
             # 添加标签
             self.label_image.append(tk.Label(self.frame_images))
-            self.label_image[-1].pack(side=tk.LEFT, padx=10)
+            self.label_image[-1].pack(side=tk.LEFT ,padx=10)
+
 
             image = self.resize_image(image, 0.2)
             photo = ImageTk.PhotoImage(image, 0.2)
@@ -98,20 +100,22 @@ class ImageApp:
             index = random.randint(1, 10000)
             print(index)
             main.run(index)
+            try:
+                merged_image_path = 'outputs/final' + str(index) + '.jpg'
+                image = Image.open(merged_image_path)
+                image = self.resize_image(image, 0.5)
+                photo = ImageTk.PhotoImage(image)
 
-            merged_image_path = 'outputs/final' + str(index) + '.jpg'
-            image = Image.open(merged_image_path)
-            image = self.resize_image(image, 0.5)
-            photo = ImageTk.PhotoImage(image)
+                self.image_input_reset()
 
-            self.image_input_reset()
+                self.photo_image.append(photo)
 
-            self.label_image.append(tk.Label(self.frame_images))
-            self.label_image[-1].pack(side=tk.LEFT, padx=100)
+                self.output_image_label.pack()
+                self.output_image_label.config(image=photo)
 
-            self.label_image[-1].config(image=photo)
-            self.label_image[-1].image = photo
-            self.photo_image.append(photo)
+            except FileNotFoundError as ex:
+                print("图片不符合拼接要求")
+                self.display_messagebox()
 
     # 重置输入
 
@@ -121,6 +125,13 @@ class ImageApp:
             label.config(image='')
         # 清空images库，以便于第二次拼接
         main.images = []
+
+    def image_output_reset(self):
+        self.output_image_label.config(image='')
+
+    def display_messagebox(self):
+        tk.messagebox.showerror(title='出现错误',
+                                message='您选择的图片不适合全景拼接')  # 消息提醒弹窗，点击确定返回值为 ok
 
 
 # 创建主窗口
