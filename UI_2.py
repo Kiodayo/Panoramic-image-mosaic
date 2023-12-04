@@ -14,6 +14,7 @@ class ImageApp:
         self.root = root
         self.root.title("Image Viewer")
         self.root.geometry("1000x800")  # 设置窗口的大小
+        self.has_output = False
 
         # 图片框架，用于显示图片
         self.frame_images = tk.Frame(self.root, bg="yellow")
@@ -55,6 +56,10 @@ class ImageApp:
 
     def load_image(self):
         file_path = filedialog.askopenfilename()
+        if self.has_output:
+            self.image_output_reset()
+            self.image_input_reset()
+
         if file_path:
             image = image = Image.open(file_path)
             photo = ImageTk.PhotoImage(image)
@@ -118,6 +123,7 @@ class ImageApp:
                 image = self.resize_image(image, 0.5)
                 photo = ImageTk.PhotoImage(image)
 
+
                 self.image_input_reset()
 
                 self.photo_image.append(photo)
@@ -125,6 +131,8 @@ class ImageApp:
                 self.output_image_label.pack(
                     side=tk.LEFT, padx=5, anchor='center')
                 self.output_image_label.config(image=photo)
+
+                self.has_output = True
 
             except FileNotFoundError as ex:
                 print("图片不符合拼接要求")
@@ -136,12 +144,16 @@ class ImageApp:
         for label in self.label_image:
             print("delete")
             label.config(image='')
+            label.image = None
+            label.pack_forget()
         self.photo_image = []
         # 清空images库，以便于第二次拼接
+        self.label_image = []
         main.images = []
 
     def image_output_reset(self):
-        self.output_image_label.config(image='')
+        self.output_image_label.pack_forget()
+        self.has_output = False
 
     def display_messagebox(self):
         tk.messagebox.showerror(title='出现错误',
