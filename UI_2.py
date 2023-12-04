@@ -16,7 +16,7 @@ class ImageApp:
         self.root.geometry("1000x800")  # 设置窗口的大小
 
         # 图片框架，用于显示图片
-        self.frame_images = tk.Frame(self.root)
+        self.frame_images = tk.Frame(self.root, bg="yellow")
         self.frame_images.pack(fill=tk.BOTH, expand=True)
 
         # 用于显示图像一和图像二的标签
@@ -55,43 +55,56 @@ class ImageApp:
 
     def load_image(self):
         file_path = filedialog.askopenfilename()
-        print(file_path)
         if file_path:
-            # 加载图片并调整大小
-            image = Image.open(file_path)
+            image = image = Image.open(file_path)
+            photo = ImageTk.PhotoImage(image)
 
-            # 导入到图像库中
+            # 读取图片列表
             image_read = cv2.imread(file_path)
             main.images.append(image_read)
-            print("add")
 
-            # 取消输出显示
+            # 重置输出显示
             self.image_output_reset()
 
-            # 添加标签
+            # 创建并添加新图片的标签
             self.label_image.append(tk.Label(self.frame_images))
-            self.label_image[-1].pack(side=tk.LEFT, padx=10)
-
-            image = self.resize_image(image, 0.2)
-            photo = ImageTk.PhotoImage(image, 0.2)
-
-            # 显示图片
+            self.label_image[-1].pack(side=tk.LEFT, padx=5, pady=5)
             self.label_image[-1].config(image=photo)
-            self.label_image[-1].image = photo  # 保存引用
-            self.photo_image.append(photo)  # 保存
+
+            # 添加相应的图片对象占位符
+            self.photo_image.append(photo)
+
+            # 调整所有图片大小以适应界面
+            self.resize_images()
+
+    def resize_images(self):
+        total_images = len(self.label_image)
+        # print(total_images)
+        # 根据想要摆放的图片数量可以改变缩放因子
+        scale = 0.3 if total_images < 4 else ( 0.9 / total_images)
+        print(scale)
+        for index, label in enumerate(self.label_image):
+            image = main.images[index]
+            image = Image.fromarray(cv2.cvtColor(image, cv2.COLOR_BGR2RGB))
+            image = self.resize_image(image, scale)
+            photo = ImageTk.PhotoImage(image)
+
+            self.photo_image[index] = photo  # 更新引用
+
+            label.config(image=photo)
+            label.image = photo  # 保留引用
 
     # 调整图片大小
     def resize_image(self, image, scale):
-        # 按窗口大小比例缩放图片（40%大小）
+        # 获取当前宽度用于缩放
         base_width = int(self.root.winfo_width() * scale)
-
-        # 计算缩放比例
-        w_percent = base_width / float(image.size[0])
-        h_size = int(float(image.size[1]) * float(w_percent))
+        w_percent = (base_width / float(image.size[0]))
+        h_size = int((float(image.size[1]) * float(w_percent)))
 
         return image.resize((base_width, h_size), Image.BICUBIC)
 
     # 全景图片拼接处理
+
     def merge_images(self):
         # 此处的实现将根据你的具体需求而定
         # 确保两张图片都已被加载
@@ -109,7 +122,8 @@ class ImageApp:
 
                 self.photo_image.append(photo)
 
-                self.output_image_label.pack()
+                self.output_image_label.pack(
+                    side=tk.LEFT, padx=5, anchor='center')
                 self.output_image_label.config(image=photo)
 
             except FileNotFoundError as ex:
@@ -122,6 +136,7 @@ class ImageApp:
         for label in self.label_image:
             print("delete")
             label.config(image='')
+        self.photo_image = []
         # 清空images库，以便于第二次拼接
         main.images = []
 
