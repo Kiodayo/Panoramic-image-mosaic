@@ -70,8 +70,7 @@ class ImageApp:
 
             # 添加标签
             self.label_image.append(tk.Label(self.frame_images))
-            self.label_image[-1].pack(side=tk.LEFT ,padx=10)
-
+            self.label_image[-1].pack(side=tk.LEFT, padx=10)
 
             image = self.resize_image(image, 0.2)
             photo = ImageTk.PhotoImage(image, 0.2)
