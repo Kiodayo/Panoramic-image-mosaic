@@ -71,13 +71,6 @@ def stitch_image(img1,img2,H):
 
     return  result_image
 
-# # 将图片A进行视角变换，result是变换后图片
-#         result = cv2.warpPerspective(imageA, H, (imageA.shape[1] + imageB.shape[1], imageA.shape[0]))
-#         #self.cv_show('result', result)
-#         # 将图片B传入result图片最左端
-#         result[0:imageB.shape[0], 0:imageB.shape[1]] = imageB
-#         #self.cv_show('result', result)
-
 
 
 # 1.读取文件
