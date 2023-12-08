@@ -1,6 +1,7 @@
 import numpy as np
 import cv2 as cv
 from matplotlib import pyplot as plt
+import os
 
 
 def cv_show(name, img):
@@ -176,8 +177,21 @@ def stitch_images_not_cut(image_path1, image_path2):
 #     else:
 #         print("Unable to stitch images due to insufficient matches.")
 
+
+img_dir = 'input'
+names = os.listdir(img_dir)
+images = []
+for name in names:
+    img_path = os.path.join(img_dir, name)
+    image = cv.imread(img_path)
+    if image is None:
+        print(f"读取图片失败: {name}")
+        continue
+    # print(img_path)
+    images.append(img_path)
+
 def run(output_num):
-    stitched_img = stitch_images_not_cut('images/image1-1.jpg', 'images/image1-2.jpg')
+    stitched_img = stitch_images_not_cut('images[0]', 'images[1]')
     stitched_img = cv.cvtColor(stitched_img, cv.COLOR_BGR2RGB)
     plt.figure()
     plt.imshow(stitched_img)
